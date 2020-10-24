@@ -1,5 +1,5 @@
 const {
-  PG_DATABASE,
+  DB_NAME,
   PG_USERNAME,
   PG_PASSWORD,
   PG_HOST,
@@ -10,7 +10,7 @@ const {
 module.exports = {
   username: PG_USERNAME,
   password: PG_PASSWORD,
-  database: PG_DATABASE,
+  database: DB_NAME,
   host: PG_HOST,
   port: PG_PORT,
   dialect: 'postgres',

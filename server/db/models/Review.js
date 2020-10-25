@@ -20,6 +20,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    reply: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     commenterId: {
       type: DataTypes.INTEGER,
       references: {

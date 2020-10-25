@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
       as: 'owner',
       onDelete: 'CASCADE',
     });
+
+    Restaurant.hasMany(models.Review, {
+      foreignKey: 'restaurantId',
+      as: 'reviews',
+    });
   };
 
   return Restaurant;

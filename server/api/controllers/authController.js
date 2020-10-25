@@ -44,7 +44,7 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const { firstName, lastName, email, password, role } = req.body;
   const error = {};
   const emailRegEx = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -63,6 +63,9 @@ const signup = async (req, res) => {
   if (!lastName) {
     error.lastName = 'Last name is required';
   }
+  if (!role) {
+    error.role = 'Role is required';
+  }
 
   if (Object.keys(error).length > 0) {
     return res.status(400).json({
@@ -76,7 +79,7 @@ const signup = async (req, res) => {
       password,
       firstName,
       lastName,
-      role: ROLES.USER,
+      role,
     });
     const token = await db.User.generateToken(user);
 

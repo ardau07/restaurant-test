@@ -2,8 +2,13 @@ const createError = require('http-errors');
 const express = require('express');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
+const passport = require('passport');
+const session = require('express-session');
+
+require('./config/passport');
 
 const apiRouter = require('./api/routers');
+const { JWT_SECRET } = require('./config/variables');
 
 const app = express();
 
@@ -11,6 +16,20 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
+
+// Authentication middleware
+app.use(
+  session({
+    secret: JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      httpOnly: false,
+    },
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/api', apiRouter);
 

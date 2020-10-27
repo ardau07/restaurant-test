@@ -1,15 +1,54 @@
-import React from 'react';
-import { Route, Switch } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Route, Switch, Redirect } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
+import Layout from '../components/Layout';
+import Loader from '../components/Loader';
 import LoginPage from '../pages/auth/Login';
 import SignupPage from '../pages/auth/Signup';
+import HomePage from '../pages/main/Home';
+
+import { getProfile } from 'src/store/actions/auth';
 
 function Routes() {
-  return (
+  const [loading, setLoading] = useState(false);
+
+  const dispatch = useDispatch();
+  const isLoggedIn = useSelector(state => !!state.auth.user);
+
+  const getAccount = useCallback(async () => {
+    setLoading(true);
+    await dispatch(getProfile());
+    setLoading(false);
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!!localStorage.getItem('token')) {
+      getAccount();
+    }
+  }, [getAccount]);
+
+  return loading ? (
+    <Loader />
+  ) : (
     <Switch>
+    <Route
+      exact
+      path="/"
+      render={() => {
+        if (isLoggedIn) return <Redirect to="/home" />;
+        return <Redirect to="/login" />;
+      }}
+    />
       <Route exact path="/login" component={LoginPage} />
       <Route exact path="/signup" component={SignupPage} />
-      <Route path="/home" component={() => <h4>Home Page</h4>} />
+      {isLoggedIn && (
+        <Layout>
+          <Switch>
+            <Route path="/home" component={HomePage} />
+          </Switch>
+        </Layout>
+      )}
     </Switch>
   );
 };

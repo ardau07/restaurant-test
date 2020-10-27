@@ -105,7 +105,12 @@ const signup = async (req, res) => {
   }
 };
 
+const getUser = async (req, res) => {
+  return res.json({ user: req.user });
+};
+
 module.exports = {
   login,
   signup,
+  getUser,
 };

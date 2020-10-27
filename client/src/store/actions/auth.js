@@ -22,7 +22,7 @@ export function login(data) {
     } catch (error) {
       dispatch({
         type: requestFail(LOGIN_REQUEST),
-        payload: error.response.data,
+        payload: error?.response?.data,
       });
     }
   };
@@ -46,7 +46,7 @@ export function signup(data) {
     } catch (error) {
       dispatch({
         type: requestFail(SIGNUP_REQUEST),
-        payload: error.response.data,
+        payload: error?.response?.data,
       });
     }
   };
@@ -68,7 +68,7 @@ export function getProfile() {
     } catch (error) {
       dispatch({
         type: requestFail(GET_PROFILE_REQUEST),
-        payload: error.response.data,
+        payload: error?.response?.data,
       });
     }
   };

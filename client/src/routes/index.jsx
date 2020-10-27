@@ -7,6 +7,7 @@ import Loader from '../components/Loader';
 import LoginPage from '../pages/auth/Login';
 import SignupPage from '../pages/auth/Signup';
 import HomePage from '../pages/main/Home';
+import RestaurantPage from '../pages/restaurant/RestaurantsList'
 
 import { getProfile } from 'src/store/actions/auth';
 
@@ -46,6 +47,7 @@ function Routes() {
         <Layout>
           <Switch>
             <Route path="/home" component={HomePage} />
+            <Route path="/restaurants" component={RestaurantPage} />
           </Switch>
         </Layout>
       )}

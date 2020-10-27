@@ -7,6 +7,7 @@ import createRootReducer from './reducers';
 
 export const history = createBrowserHistory();
 
+// eslint-disable-next-line
 export default (preloadedState = {}) => {
   const middlewares = [thunk, routerMiddleware(history)];
   const enhancers = [applyMiddleware(...middlewares)];

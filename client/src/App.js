@@ -1,22 +1,25 @@
 import React from 'react';
-import { createBrowserHistory } from 'history';
-import { BrowserRouter } from 'react-router-dom';
+import { Provider } from 'react-redux';
+import { ConnectedRouter } from 'connected-react-router';
 import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 
+import configureStore, { history } from './store';
 import theme from './theme';
 import Routes from './routes';
 
-const history = createBrowserHistory();
+const store = configureStore();
 
 const App = () => {
   return (
-    <BrowserRouter history={history}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <Routes />
-      </ThemeProvider>
-    </BrowserRouter>
+    <Provider store={store}>
+      <ConnectedRouter history={history}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Routes />
+        </ThemeProvider>
+      </ConnectedRouter>
+    </Provider>
   );
 };
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import {
   Box,
   Button,
@@ -12,6 +13,7 @@ import {
 } from '@material-ui/core';
 import { Formik } from 'formik';
 
+import { signup } from 'src/store/actions/auth';
 import validationSchema from './schema';
 
 const ROLES = [
@@ -21,8 +23,18 @@ const ROLES = [
 ];
 
 function Signup() {
-  const handleSubmit = (values) => {
-    console.log(values);
+  const dispatch = useDispatch();
+
+  const handleSubmit = async (values) => {
+    await dispatch(
+      signup({
+        email: values.email,
+        firstName: values.firstName,
+        lastName: values.lastName,
+        password: values.password,
+        role: values.role,
+      })
+    );
   };
 
   return (
@@ -40,15 +52,7 @@ function Signup() {
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
-          {({
-            errors,
-            handleBlur,
-            handleChange,
-            handleSubmit,
-            isSubmitting,
-            touched,
-            values,
-          }) => (
+          {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
             <form onSubmit={handleSubmit}>
               <Card>
                 <Box display="flex" flexDirection="column" alignItems="center" mt={2} mb={-2}>
@@ -181,6 +185,6 @@ function Signup() {
       </Container>
     </Box>
   );
-};
+}
 
 export default Signup;

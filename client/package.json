@@ -5,10 +5,12 @@
   "dependencies": {
     "@material-ui/core": "^4.11.0",
     "@material-ui/styles": "^4.10.0",
+    "@reduxjs/toolkit": "^1.4.0",
     "@testing-library/jest-dom": "^5.11.5",
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "axios": "^0.21.0",
+    "axios-middleware": "^0.3.1",
     "cls": "^0.1.5",
     "connected-react-router": "^6.8.0",
     "formik": "^2.2.1",

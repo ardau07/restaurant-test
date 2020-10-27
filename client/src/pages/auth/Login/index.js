@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   Box,
   Button,
@@ -11,13 +11,17 @@ import {
   TextField,
   Typography,
 } from '@material-ui/core';
+import { Alert } from '@material-ui/lab';
 import { Formik } from 'formik';
 
 import { login } from 'src/store/actions/auth';
+import { requestFail } from 'src/utils/api';
+import { LOGIN_REQUEST } from 'src/store/types';
 import validationSchema from './schema';
 
 function Login() {
   const dispatch = useDispatch();
+  const { status: authStatus, error: authError } = useSelector((state) => state.auth);
 
   const handleSubmit = async (values) => {
     await dispatch(
@@ -42,13 +46,18 @@ function Login() {
           {({ errors, handleBlur, handleChange, handleSubmit, isSubmitting, touched, values }) => (
             <form onSubmit={handleSubmit}>
               <Card>
-                <Box display="flex" flexDirection="column" alignItems="center" mt={2} mb={-2}>
+                <Box display="flex" flexDirection="column" alignItems="center" mt={2}>
                   <Typography variant="h4">Welcome</Typography>
                   <Box mt={2}>
                     <Typography variant="body1">Sign in to your account</Typography>
                   </Box>
                 </Box>
                 <CardContent>
+                  {authStatus === requestFail(LOGIN_REQUEST) && (
+                    <Alert variant="filled" severity="error">
+                      {authError}
+                    </Alert>
+                  )}
                   <TextField
                     error={Boolean(touched.email && errors.email)}
                     fullWidth

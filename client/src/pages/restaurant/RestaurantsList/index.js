@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Container } from '@material-ui/core';
 
+import RestaurantPanel from '../RestaurantPanel';
 import { getRestaurants } from 'src/store/actions/restaurant';
 
 function RestaurantsList() {
@@ -11,9 +13,19 @@ function RestaurantsList() {
     dispatch(getRestaurants());
   }, [dispatch]);
 
-  console.log(restaurants);
+  const handleLeaveComment = (restaurantId) => (event) => {
+    event.stopPropagation();
+    console.log(restaurantId);
+  };
 
-  return <h2>Restaurants</h2>;
+  return (
+    <Container maxWidth="md">
+      {restaurants &&
+        restaurants.map((restaurant) => (
+          <RestaurantPanel restaurant={restaurant} onLeaveComment={handleLeaveComment} />
+        ))}
+    </Container>
+  );
 }
 
 export default RestaurantsList;

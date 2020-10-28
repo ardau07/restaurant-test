@@ -3,10 +3,11 @@ const ROLES = require('../../constants/roles');
 
 const read = async (req, res) => {
   const { limit, offset, minRating, maxRating } = req.query;
-  let where = {
-    ownerId: req.user.id,
-  };
+  let where = {};
 
+  if (req.user.role === ROLES.OWNER) {
+    where['ownerId'] = req.user.id;
+  }
   if (minRating) {
     where['rating'] = {
       [Op.gte]: minRating,

@@ -23,24 +23,18 @@ const read = async (req, res) => {
   try {
     const restaurants = await db.Restaurant.findAll({
       where,
+      attributes: ['id', 'name', 'avgRating', 'numberOfReviews'],
       include: [
         {
-          model: db.Review,
-          foreignKey: 'restaurantId',
-          as: 'reviews',
-          attributes: ['id', 'rating', 'visitDate', 'comment', 'reply'],
-          include: [
-            {
-              model: db.User,
-              foreignKey: 'commenterId',
-              as: 'commenter',
-              attributes: ['id', 'firstName', 'lastName'],
-            },
-          ],
+          model: db.User,
+          foreignKey: 'ownerId',
+          as: 'owner',
+          attributes: ['id', 'firstName', 'lastName'],
         },
       ],
       limit,
       offset,
+      order: [['avgRating', 'DESC']],
     });
     const totalCount = await db.Restaurant.count({
       where,
@@ -75,6 +69,8 @@ const create = async (req, res) => {
     const restaurant = await db.Restaurant.create({
       name,
       ownerId: req.user.role === ROLES.ADMIN ? ownerId : req.user.id,
+      avgRating: 0,
+      numberOfReviews: 0,
     });
     return res.status(201).json({
       restaurant,
@@ -98,21 +94,14 @@ const update = async (req, res) => {
     );
 
     const restaurant = await db.Restaurant.findOne({
-      where: { id: restaurantId },
+      where,
+      attributes: ['id', 'name', 'avgRating', 'numberOfReviews'],
       include: [
         {
-          model: db.Review,
-          foreignKey: 'restaurantId',
-          as: 'reviews',
-          attributes: ['id', 'rating', 'visitDate', 'comment', 'commenterId'],
-          include: [
-            {
-              model: db.User,
-              foreignKey: 'commenterId',
-              as: 'commenter',
-              attributes: ['id', 'firstName', 'lastName'],
-            },
-          ],
+          model: db.User,
+          foreignKey: 'ownerId',
+          as: 'owner',
+          attributes: ['id', 'firstName', 'lastName'],
         },
       ],
     });

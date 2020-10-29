@@ -14,6 +14,16 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id',
       },
     },
+    avgRating: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    numberOfReviews: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
   });
 
   Restaurant.associate = (models) => {

@@ -20,33 +20,11 @@ const get = async (req, res) => {
       offset,
       order: [['visitDate', 'DESC']],
     });
-    const highest = await db.Review.findOne({
+    const highest = await db.Review.max('rating', {
       where: { restaurantId },
-      attributes: ['id', 'rating', 'visitDate', 'comment', 'reply'],
-      include: [
-        {
-          model: db.User,
-          foreignKey: 'commenterId',
-          as: 'commenter',
-          attributes: ['id', 'firstName', 'lastName'],
-        },
-      ],
-      limit: 1,
-      order: [['rating', 'DESC']],
     });
-    const lowest = await db.Review.findOne({
+    const lowest = await db.Review.min('rating', {
       where: { restaurantId },
-      attributes: ['id', 'rating', 'visitDate', 'comment', 'reply'],
-      include: [
-        {
-          model: db.User,
-          foreignKey: 'commenterId',
-          as: 'commenter',
-          attributes: ['id', 'firstName', 'lastName'],
-        },
-      ],
-      limit: 1,
-      order: [['rating', 'ASC']],
     });
     const totalCount = await db.Review.count({
       where: { restaurantId },

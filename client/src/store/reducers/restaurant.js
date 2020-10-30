@@ -4,7 +4,7 @@ import { requestSuccess, requestFail } from 'src/utils/api';
 import { GET_RESTAURANTS_REQUEST } from '../types';
 
 const initialState = {
-  restaurants: null,
+  restaurants: [],
   totalCount: 0,
   status: 'INIT',
   error: null,
@@ -20,7 +20,7 @@ export default createReducer(initialState, {
 
   [requestFail(GET_RESTAURANTS_REQUEST)]: (state, { payload }) => ({
     ...state,
-    restaurants: null,
+    restaurants: [],
     error: payload.error,
     status: requestFail(GET_RESTAURANTS_REQUEST),
   }),

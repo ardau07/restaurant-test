@@ -1,3 +1,5 @@
+const { Op } = require('sequelize');
+
 const db = require('../../db/models');
 const ROLES = require('../../constants/roles');
 
@@ -9,13 +11,13 @@ const read = async (req, res) => {
     where['ownerId'] = req.user.id;
   }
   if (minRating) {
-    where['rating'] = {
+    where['avgRating'] = {
       [Op.gte]: minRating,
     };
   }
   if (maxRating) {
-    where['rating'] = {
-      ...where['rating'],
+    where['avgRating'] = {
+      ...where['avgRating'],
       [Op.lte]: maxRating,
     };
   }

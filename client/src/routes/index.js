@@ -7,7 +7,8 @@ import Loader from '../components/Loader';
 import LoginPage from '../pages/auth/Login';
 import SignupPage from '../pages/auth/Signup';
 import HomePage from '../pages/main/Home';
-import RestaurantPage from '../pages/restaurant/RestaurantsList'
+import RestaurantsList from '../pages/restaurant/RestaurantsList';
+import RestaurantDetails from '../pages/restaurant/RestaurantDetails';
 
 import { getProfile } from 'src/store/actions/auth';
 
@@ -15,7 +16,7 @@ function Routes() {
   const [loading, setLoading] = useState(false);
 
   const dispatch = useDispatch();
-  const isLoggedIn = useSelector(state => !!state.auth.user);
+  const isLoggedIn = useSelector((state) => !!state.auth.user);
 
   const getAccount = useCallback(async () => {
     setLoading(true);
@@ -33,26 +34,27 @@ function Routes() {
     <Loader />
   ) : (
     <Switch>
-    <Route
-      exact
-      path="/"
-      render={() => {
-        if (isLoggedIn) return <Redirect to="/home" />;
-        return <Redirect to="/login" />;
-      }}
-    />
+      <Route
+        exact
+        path="/"
+        render={() => {
+          if (isLoggedIn) return <Redirect to="/home" />;
+          return <Redirect to="/login" />;
+        }}
+      />
       <Route exact path="/login" component={LoginPage} />
       <Route exact path="/signup" component={SignupPage} />
       {isLoggedIn && (
         <Layout>
           <Switch>
-            <Route path="/home" component={HomePage} />
-            <Route path="/restaurants" component={RestaurantPage} />
+            <Route exact path="/home" component={HomePage} />
+            <Route exact path="/restaurants" component={RestaurantsList} />
+            <Route exact path="/restaurants/:restaurantId" component={RestaurantDetails} />
           </Switch>
         </Layout>
       )}
     </Switch>
   );
-};
+}
 
 export default Routes;

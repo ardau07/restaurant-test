@@ -10,6 +10,9 @@ const useStyles = makeStyles((theme) => ({
   noPadding: {
     padding: 0,
   },
+  filter: {
+    minWidth: 200,
+  },
 }));
 
 export default useStyles;

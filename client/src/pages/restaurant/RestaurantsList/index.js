@@ -5,6 +5,7 @@ import {
   Box,
   IconButton,
   Paper,
+  Slider,
   Table,
   TableBody,
   TableCell,
@@ -18,6 +19,7 @@ import { Rating } from '@material-ui/lab';
 import { OpenInNew as ViewIcon } from '@material-ui/icons';
 
 import { getRestaurants } from 'src/store/actions/restaurant';
+import useDebounce from 'src/hooks/useDebounce';
 
 import useStyles from './style';
 
@@ -25,12 +27,22 @@ function RestaurantsList() {
   const classes = useStyles();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [filter, setFilter] = useState([1, 5]);
+
+  const debouncedFilter = useDebounce(filter, 500);
+
   const dispatch = useDispatch();
   const { restaurants, totalCount } = useSelector((state) => state.restaurant);
 
   useEffect(() => {
-    dispatch(getRestaurants());
-  }, [dispatch]);
+    dispatch(
+      getRestaurants(page * rowsPerPage, rowsPerPage, {
+        minRating: filter[0] || 1,
+        maxRating: filter[1] || 5,
+      })
+    );
+    // eslint-disable-next-line
+  }, [dispatch, page, rowsPerPage, debouncedFilter]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -41,8 +53,26 @@ function RestaurantsList() {
     setPage(0);
   };
 
+  const handleChangeFilter = (event, newFilter) => {
+    setFilter(newFilter);
+  };
+
   return (
     <Paper className={classes.paper}>
+      <Box display="flex" justifyContent="flex-end">
+        <Box display="flex" flexDirection="column" pr={2} mt={2}>
+          <Typography variant="subtitle1">Filter by rating</Typography>
+          <Slider
+            className={classes.filter}
+            value={filter}
+            onChange={handleChangeFilter}
+            valueLabelDisplay="auto"
+            min={1}
+            max={5}
+            step={0.1}
+          />
+        </Box>
+      </Box>
       <TableContainer>
         <Table>
           <TableHead>
@@ -75,7 +105,11 @@ function RestaurantsList() {
                     </Box>
                   </TableCell>
                   <TableCell className={classes.noPadding}>
-                    <IconButton component={Link} color="primary" to={`/reviews/${restaurant.id}`}>
+                    <IconButton
+                      component={Link}
+                      color="primary"
+                      to={`/restaurants/${restaurant.id}`}
+                    >
                       <ViewIcon />
                     </IconButton>
                   </TableCell>

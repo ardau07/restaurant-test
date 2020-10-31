@@ -1,6 +1,6 @@
 import reviewService from 'src/services/reviewService';
 import { requestFail, requestPending, requestSuccess } from 'src/utils/api';
-import { CREATE_REVIEW_REQUEST, GET_REVIEWS_REQUEST } from '../types';
+import { CREATE_REVIEW_REQUEST, GET_REVIEWS_REQUEST, UPDATE_REVIEW_REQUEST } from '../types';
 
 export function getReviews(restaurantId, offset, limit) {
   return async (dispatch) => {
@@ -44,6 +44,28 @@ export function createReview(restaurantId, data, successCB, failCB) {
     } catch (error) {
       dispatch({
         type: requestFail(CREATE_REVIEW_REQUEST),
+        payload: error?.response?.data,
+      });
+      failCB && failCB();
+    }
+  };
+}
+
+export function updateReview(restaurantId, reviewId, data, successCB, failCB) {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: requestPending(UPDATE_REVIEW_REQUEST) });
+
+      const { review } = await reviewService.updateReview(restaurantId, reviewId, data);
+
+      dispatch({
+        type: requestSuccess(UPDATE_REVIEW_REQUEST),
+        payload: { review },
+      });
+      successCB && successCB();
+    } catch (error) {
+      dispatch({
+        type: requestFail(UPDATE_REVIEW_REQUEST),
         payload: error?.response?.data,
       });
       failCB && failCB();

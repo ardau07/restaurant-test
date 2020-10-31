@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { requestSuccess, requestFail } from 'src/utils/api';
-import { GET_RESTAURANTS_REQUEST } from '../types';
+import { CREATE_RESTAURANT_REQUEST, GET_RESTAURANTS_REQUEST } from '../types';
 
 const initialState = {
   restaurants: [],
@@ -23,5 +23,17 @@ export default createReducer(initialState, {
     restaurants: [],
     error: payload?.error,
     status: requestFail(GET_RESTAURANTS_REQUEST),
+  }),
+
+  [requestSuccess(CREATE_RESTAURANT_REQUEST)]: (state, { payload }) => ({
+    ...state,
+    totalCount: payload.totalCount + 1,
+    status: requestSuccess(CREATE_RESTAURANT_REQUEST),
+  }),
+
+  [requestFail(CREATE_RESTAURANT_REQUEST)]: (state, { payload }) => ({
+    ...state,
+    error: payload?.error,
+    status: requestFail(CREATE_RESTAURANT_REQUEST),
   }),
 });

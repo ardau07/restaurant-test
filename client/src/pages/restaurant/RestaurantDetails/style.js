@@ -7,6 +7,10 @@ const useStyles = makeStyles((theme) => ({
   restaurantDetails: {
     padding: '24px 32px',
   },
+  noPadding: {
+    paddingTop: 0,
+    paddingBottom: 0,
+  },
 }));
 
 export default useStyles;

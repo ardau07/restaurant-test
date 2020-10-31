@@ -31,6 +31,18 @@ class ReviewService {
       throw error;
     }
   };
+
+  updateReview = async (restaurantId, reviewId, data) => {
+    try {
+      const response = await axios.put(`${baseURL}/${restaurantId}/reviews/${reviewId}`, data);
+      if (response.status >= 200 && response.status < 300) {
+        return response.data;
+      }
+      throw new Error(response.data);
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 const reviewService = new ReviewService();

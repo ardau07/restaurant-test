@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import {
@@ -19,6 +19,7 @@ import {
 import { Rating } from '@material-ui/lab';
 import { OpenInNew as ViewIcon } from '@material-ui/icons';
 
+import RestaurantDialog from 'src/components/RestaurantDialog';
 import { getRestaurants } from 'src/store/actions/restaurant';
 import useDebounce from 'src/hooks/useDebounce';
 import { decimalFormat } from 'src/utils/number';
@@ -31,6 +32,7 @@ function RestaurantsList() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filter, setFilter] = useState([1, 5]);
+  const [openDialog, setOpenDialog] = useState(false);
 
   const debouncedFilter = useDebounce(filter, 500);
 
@@ -38,15 +40,19 @@ function RestaurantsList() {
   const { restaurants, totalCount } = useSelector((state) => state.restaurant);
   const profile = useSelector((state) => state.auth.user);
 
-  useEffect(() => {
+  const fetchRestaurants = useCallback(async () => {
     dispatch(
       getRestaurants(page * rowsPerPage, rowsPerPage, {
-        minRating: filter[0] || 1,
+        minRating: filter[0] === 1 ? 0 : filter[0] || 1,
         maxRating: filter[1] || 5,
       })
     );
     // eslint-disable-next-line
   }, [dispatch, page, rowsPerPage, debouncedFilter]);
+
+  useEffect(() => {
+    fetchRestaurants();
+  }, [fetchRestaurants]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -61,12 +67,16 @@ function RestaurantsList() {
     setFilter(newFilter);
   };
 
-  console.log(profile);
   return (
     <>
       {profile.role === ROLES.OWNER && (
-        <Box display="flex" justifyContent="flex-end">
-          <Button variant="contained" color="primary" disableElevation>
+        <Box display="flex" justifyContent="flex-end" mb={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            disableElevation
+            onClick={() => setOpenDialog(true)}
+          >
             Create a new restaurant
           </Button>
         </Box>
@@ -128,7 +138,6 @@ function RestaurantsList() {
                         component={Link}
                         color="primary"
                         to={`/restaurants/${restaurant.id}`}
-                        disabled={!restaurant.numberOfReviews}
                       >
                         <ViewIcon />
                       </IconButton>
@@ -148,6 +157,12 @@ function RestaurantsList() {
           />
         </TableContainer>
       </Paper>
+      <RestaurantDialog
+        open={openDialog}
+        restaurantId="new"
+        onClose={() => setOpenDialog(false)}
+        fetch={fetchRestaurants}
+      />
     </>
   );
 }

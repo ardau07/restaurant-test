@@ -20,6 +20,18 @@ class RestaurantService {
       throw error;
     }
   };
+
+  createRestaurant = async (data) => {
+    try {
+      const response = await axios.post(`${baseURL}`, data);
+      if (response.status >= 200 && response.status < 300) {
+        return response.data;
+      }
+      throw new Error(response.data);
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 const restaurantService = new RestaurantService();

@@ -1,7 +1,7 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { requestSuccess, requestFail } from 'src/utils/api';
-import { CREATE_REVIEW_REQUEST, GET_REVIEWS_REQUEST } from '../types';
+import { CREATE_REVIEW_REQUEST, GET_REVIEWS_REQUEST, UPDATE_REVIEW_REQUEST } from '../types';
 
 const initialState = {
   reviews: [],
@@ -46,7 +46,19 @@ export default createReducer(initialState, {
   }),
 
   [requestFail(CREATE_REVIEW_REQUEST)]: (state, { payload }) => ({
+    ...state,
     error: payload?.error,
     status: requestFail(CREATE_REVIEW_REQUEST),
+  }),
+
+  [requestSuccess(UPDATE_REVIEW_REQUEST)]: (state, { payload }) => ({
+    ...state,
+    status: requestSuccess(UPDATE_REVIEW_REQUEST),
+  }),
+
+  [requestSuccess(UPDATE_REVIEW_REQUEST)]: (state, { payload }) => ({
+    ...state,
+    error: payload?.error,
+    status: requestFail(UPDATE_REVIEW_REQUEST),
   }),
 });

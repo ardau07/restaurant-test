@@ -20,6 +20,7 @@ import { OpenInNew as ViewIcon } from '@material-ui/icons';
 
 import { getRestaurants } from 'src/store/actions/restaurant';
 import useDebounce from 'src/hooks/useDebounce';
+import { decimalFormat } from 'src/utils/number';
 
 import useStyles from './style';
 
@@ -92,23 +93,30 @@ function RestaurantsList() {
                   <TableCell>{restaurant.name}</TableCell>
                   <TableCell>{`${restaurant.owner.firstName} ${restaurant.owner.lastName}`}</TableCell>
                   <TableCell>
-                    <Box display="flex" alignItems="center">
-                      <Rating
-                        className={classes.rating}
-                        value={restaurant.avgRating}
-                        precision={0.1}
-                        readOnly
-                      />
-                      <Typography variant="subtitle2">
-                        {`${restaurant.avgRating} of ${restaurant.numberOfReviews} reviews`}
-                      </Typography>
-                    </Box>
+                    {restaurant.numberOfReviews === 0 ? (
+                      <Typography variant="subtitle2">No reviews</Typography>
+                    ) : (
+                      <Box display="flex" alignItems="center">
+                        <Rating
+                          className={classes.rating}
+                          value={restaurant.avgRating}
+                          precision={0.1}
+                          readOnly
+                        />
+                        <Typography variant="subtitle2">
+                          {`${decimalFormat(restaurant.avgRating, 2)} of ${
+                            restaurant.numberOfReviews
+                          } reviews`}
+                        </Typography>
+                      </Box>
+                    )}
                   </TableCell>
                   <TableCell className={classes.noPadding}>
                     <IconButton
                       component={Link}
                       color="primary"
                       to={`/restaurants/${restaurant.id}`}
+                      disabled={!restaurant.numberOfReviews}
                     >
                       <ViewIcon />
                     </IconButton>

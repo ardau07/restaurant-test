@@ -21,7 +21,7 @@ export default createReducer(initialState, {
   [requestFail(GET_RESTAURANTS_REQUEST)]: (state, { payload }) => ({
     ...state,
     restaurants: [],
-    error: payload.error,
+    error: payload?.error,
     status: requestFail(GET_RESTAURANTS_REQUEST),
   }),
 });

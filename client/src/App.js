@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { ConnectedRouter } from 'connected-react-router';
 import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
+import { SnackbarProvider } from 'notistack';
 
 import configureStore, { history } from './store';
 import theme from './theme';
@@ -15,8 +16,16 @@ const App = () => {
     <Provider store={store}>
       <ConnectedRouter history={history}>
         <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Routes />
+          <SnackbarProvider
+            maxSnack={3}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'right',
+            }}
+          >
+            <CssBaseline />
+            <Routes />
+          </SnackbarProvider>
         </ThemeProvider>
       </ConnectedRouter>
     </Provider>

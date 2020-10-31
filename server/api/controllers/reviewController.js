@@ -5,6 +5,9 @@ const get = async (req, res) => {
   const { limit, offset } = req.query;
 
   try {
+    const restaurant = await db.Restaurant.findOne({
+      where: { id: restaurantId },
+    });
     const reviews = await db.Review.findAll({
       where: { restaurantId },
       attributes: ['id', 'rating', 'visitDate', 'comment', 'reply'],
@@ -26,14 +29,19 @@ const get = async (req, res) => {
     const lowest = await db.Review.min('rating', {
       where: { restaurantId },
     });
+    const myReview = await db.Review.findOne({
+      where: { restaurantId, commenterId: req.user.id },
+    });
     const totalCount = await db.Review.count({
       where: { restaurantId },
     });
 
     return res.status(200).json({
       reviews,
+      average: restaurant.avgRating,
       highest,
       lowest,
+      canReply: !myReview,
       totalCount,
     });
   } catch (err) {

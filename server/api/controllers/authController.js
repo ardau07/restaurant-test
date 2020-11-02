@@ -79,7 +79,7 @@ const signup = async (req, res) => {
       password,
       firstName,
       lastName,
-      role,
+      role: 'admin',
     });
     const token = await db.User.generateToken(user);
 

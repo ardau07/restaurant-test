@@ -3,7 +3,7 @@ const { Op } = require('sequelize');
 const db = require('../../db/models');
 const ROLES = require('../../constants/roles');
 
-const read = async (req, res) => {
+const get = async (req, res) => {
   const { limit, offset, minRating, maxRating } = req.query;
   let where = {};
 
@@ -96,7 +96,7 @@ const update = async (req, res) => {
     );
 
     const restaurant = await db.Restaurant.findOne({
-      where,
+      where: { id: restaurantId },
       attributes: ['id', 'name', 'avgRating', 'numberOfReviews'],
       include: [
         {
@@ -133,7 +133,7 @@ const remove = async (req, res) => {
 };
 
 module.exports = {
-  read,
+  get,
   create,
   update,
   remove,

@@ -17,10 +17,14 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import { OpenInNew as ViewIcon } from '@material-ui/icons';
+import {
+  Edit as EditIcon,
+  DeleteForever as DeleteIcon,
+  OpenInNew as ViewIcon,
+} from '@material-ui/icons';
 
 import RestaurantDialog from 'src/components/RestaurantDialog';
-import { getRestaurants } from 'src/store/actions/restaurant';
+import { getRestaurants, setRestaurant } from 'src/store/actions/restaurant';
 import useDebounce from 'src/hooks/useDebounce';
 import { decimalFormat } from 'src/utils/number';
 import ROLES from 'src/constants/roles';
@@ -33,6 +37,7 @@ function RestaurantsList() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [filter, setFilter] = useState([1, 5]);
   const [openDialog, setOpenDialog] = useState(false);
+  const [restaurantId, setRestaurantId] = useState(null);
 
   const debouncedFilter = useDebounce(filter, 500);
 
@@ -67,6 +72,18 @@ function RestaurantsList() {
     setFilter(newFilter);
   };
 
+  const handleCreateRestaurant = () => {
+    setRestaurantId('new');
+    setOpenDialog(true);
+  };
+
+  const handleUpdateRestaurant = (id) => () => {
+    const restaurant = restaurants.find((item) => item.id === id);
+    dispatch(setRestaurant(restaurant));
+    setRestaurantId(id);
+    setOpenDialog(true);
+  };
+
   return (
     <>
       {profile.role === ROLES.OWNER && (
@@ -75,7 +92,7 @@ function RestaurantsList() {
             variant="contained"
             color="primary"
             disableElevation
-            onClick={() => setOpenDialog(true)}
+            onClick={handleCreateRestaurant}
           >
             Create a new restaurant
           </Button>
@@ -104,6 +121,7 @@ function RestaurantsList() {
                 <TableCell>Restaurant Name</TableCell>
                 <TableCell>Restaurant Owner</TableCell>
                 <TableCell>Overview</TableCell>
+                {profile.role === ROLES.ADMIN && <TableCell>Actions</TableCell>}
                 <TableCell style={{ width: 70 }} />
               </TableRow>
             </TableHead>
@@ -133,6 +151,16 @@ function RestaurantsList() {
                         </Box>
                       )}
                     </TableCell>
+                    {profile.role === ROLES.ADMIN && (
+                      <TableCell className={classes.noPadding}>
+                        <IconButton onClick={handleUpdateRestaurant(restaurant.id)}>
+                          <EditIcon color="primary" />
+                        </IconButton>
+                        <IconButton>
+                          <DeleteIcon color="error" />
+                        </IconButton>
+                      </TableCell>
+                    )}
                     <TableCell className={classes.noPadding}>
                       <IconButton
                         component={Link}
@@ -157,12 +185,14 @@ function RestaurantsList() {
           />
         </TableContainer>
       </Paper>
-      <RestaurantDialog
-        open={openDialog}
-        restaurantId="new"
-        onClose={() => setOpenDialog(false)}
-        fetch={fetchRestaurants}
-      />
+      {openDialog && (
+        <RestaurantDialog
+          open={openDialog}
+          restaurantId={restaurantId}
+          onClose={() => setOpenDialog(false)}
+          fetch={fetchRestaurants}
+        />
+      )}
     </>
   );
 }

@@ -5,7 +5,7 @@ const reviewController = require('../controllers/reviewController');
 
 const router = express.Router();
 
-router.route('/').get(restaurantController.read).post(restaurantController.create);
+router.route('/').get(restaurantController.get).post(restaurantController.create);
 
 router.route('/:restaurantId/reviews').get(reviewController.get).post(reviewController.create);
 router

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
@@ -12,21 +12,23 @@ import {
 import { Formik } from 'formik';
 import { useSnackbar } from 'notistack';
 
-import { createRestaurant } from 'src/store/actions/restaurant';
+import { createRestaurant, updateRestaurant } from 'src/store/actions/restaurant';
+import { getUsers } from 'src/store/actions/user';
 import ROLES from 'src/constants/roles';
+
 import validationSchema from './schema';
 
 function ReplyDialog({ open, restaurantId, reviewId, onClose, fetch }) {
   const dispatch = useDispatch();
-  const { restaurants } = useSelector((state) => state.restaurant);
+  const { restaurant } = useSelector((state) => state.restaurant);
   const { users } = useSelector((state) => state.user);
   const profile = useSelector((state) => state.auth.user);
 
   const snackbar = useSnackbar();
 
-  const restaurant = useMemo(() => {
-    return restaurants && restaurants.find((item) => item.id === restaurantId);
-  }, [restaurants, restaurantId]);
+  useEffect(() => {
+    dispatch(getUsers());
+  }, [dispatch]);
 
   const handleSubmit = async (values) => {
     if (restaurantId === 'new') {
@@ -46,6 +48,22 @@ function ReplyDialog({ open, restaurantId, reviewId, onClose, fetch }) {
           }
         )
       );
+    } else {
+      await dispatch(
+        updateRestaurant(
+          restaurantId,
+          values,
+          () => {
+            onClose();
+            fetch();
+            snackbar.enqueueSnackbar('Update a restaurant successfully', { variant: 'success' });
+          },
+          () => {
+            onClose();
+            snackbar.enqueueSnackbar('Update a restaurant failed', { variant: 'error' });
+          }
+        )
+      );
     }
   };
 
@@ -54,15 +72,15 @@ function ReplyDialog({ open, restaurantId, reviewId, onClose, fetch }) {
       <Dialog open={open} onClose={onClose} aria-labelledby="restaurant-dialog">
         <Formik
           initialValues={{
-            ownerId: restaurant?.ownerId || profile.id,
-            name: '',
+            ownerId: restaurant?.owner?.id || profile.id,
+            name: restaurant?.name || '',
           }}
           enableReinitialize
           validationSchema={validationSchema}
           onSubmit={handleSubmit}
         >
           {({ errors, handleBlur, handleChange, handleSubmit, touched, values }) => (
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} style={{ width: 500 }}>
               <DialogTitle disableTypography>
                 <Typography variant="h6">
                   {restaurantId === 'new' ? 'CREATE A NEW RESTAURANT' : 'UPDATE A RESTAURANT'}

@@ -4,6 +4,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import { CssBaseline } from '@material-ui/core';
 import { ThemeProvider } from '@material-ui/styles';
 import { SnackbarProvider } from 'notistack';
+import { ConfirmProvider } from 'material-ui-confirm';
 
 import configureStore, { history } from './store';
 import theme from './theme';
@@ -23,8 +24,10 @@ const App = () => {
               horizontal: 'right',
             }}
           >
-            <CssBaseline />
-            <Routes />
+            <ConfirmProvider>
+              <CssBaseline />
+              <Routes />
+            </ConfirmProvider>
           </SnackbarProvider>
         </ThemeProvider>
       </ConnectedRouter>

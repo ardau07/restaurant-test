@@ -4,6 +4,7 @@ import {
   CREATE_RESTAURANT_REQUEST,
   GET_RESTAURANTS_REQUEST,
   UPDATE_RESTAURANT_REQUEST,
+  DELETE_RESTAURANT_REQUEST,
   SET_RESTAURANT,
 } from '../types';
 
@@ -70,6 +71,28 @@ export function updateRestaurant(restaurantId, data, successCB, failCB) {
       dispatch({
         type: requestFail(UPDATE_RESTAURANT_REQUEST),
         payload: error?.response?.data,
+      });
+      failCB && failCB();
+    }
+  };
+}
+
+export function deleteRestaurant(restaurantId, successCB, failCB) {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: requestPending(DELETE_RESTAURANT_REQUEST) });
+
+      await restaurantService.deleteRestaurant(restaurantId);
+
+      dispatch({
+        type: requestSuccess(DELETE_RESTAURANT_REQUEST),
+        payload: { restaurantId },
+      });
+      successCB && successCB();
+    } catch (error) {
+      dispatch({
+        type: requestFail(DELETE_RESTAURANT_REQUEST),
+        payload: error.response.data,
       });
       failCB && failCB();
     }

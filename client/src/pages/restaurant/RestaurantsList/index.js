@@ -22,9 +22,11 @@ import {
   DeleteForever as DeleteIcon,
   OpenInNew as ViewIcon,
 } from '@material-ui/icons';
+import { useSnackbar } from 'notistack';
+import { useConfirm } from 'material-ui-confirm';
 
 import RestaurantDialog from 'src/components/RestaurantDialog';
-import { getRestaurants, setRestaurant } from 'src/store/actions/restaurant';
+import { getRestaurants, setRestaurant, deleteRestaurant } from 'src/store/actions/restaurant';
 import useDebounce from 'src/hooks/useDebounce';
 import { decimalFormat } from 'src/utils/number';
 import ROLES from 'src/constants/roles';
@@ -44,6 +46,9 @@ function RestaurantsList() {
   const dispatch = useDispatch();
   const { restaurants, totalCount } = useSelector((state) => state.restaurant);
   const profile = useSelector((state) => state.auth.user);
+
+  const snackbar = useSnackbar();
+  const confirm = useConfirm();
 
   const fetchRestaurants = useCallback(async () => {
     dispatch(
@@ -82,6 +87,29 @@ function RestaurantsList() {
     dispatch(setRestaurant(restaurant));
     setRestaurantId(id);
     setOpenDialog(true);
+  };
+
+  const handleDeleteRestaurant = (id) => () => {
+    confirm({
+      description: 'Are you going to delete this restaurant?',
+    }).then(() => {
+      dispatch(
+        deleteRestaurant(
+          id,
+          () => {
+            snackbar.enqueueSnackbar('Delete a restaurant successfully', { variant: 'success' });
+            if (totalCount === page * rowsPerPage + 1 && page > 0) {
+              setPage(page - 1);
+            } else {
+              fetchRestaurants();
+            }
+          },
+          () => {
+            snackbar.enqueueSnackbar('Delete a restaurant failed', { variant: 'error' });
+          }
+        )
+      );
+    });
   };
 
   return (
@@ -157,7 +185,10 @@ function RestaurantsList() {
                           <EditIcon color="primary" />
                         </IconButton>
                         <IconButton>
-                          <DeleteIcon color="error" />
+                          <DeleteIcon
+                            color="error"
+                            onClick={handleDeleteRestaurant(restaurant.id)}
+                          />
                         </IconButton>
                       </TableCell>
                     )}

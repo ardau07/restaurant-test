@@ -43,6 +43,18 @@ class ReviewService {
       throw error;
     }
   };
+
+  deleteReview = async (restaurantId, reviewId) => {
+    try {
+      const response = await axios.delete(`${baseURL}/${restaurantId}/reviews/${reviewId}`);
+      if (response.status >= 200 && response.status < 300) {
+        return response.data;
+      }
+      throw new Error(response.data);
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 const reviewService = new ReviewService();

@@ -1,10 +1,17 @@
 import { createReducer } from '@reduxjs/toolkit';
 
 import { requestSuccess, requestFail } from 'src/utils/api';
-import { CREATE_REVIEW_REQUEST, GET_REVIEWS_REQUEST, UPDATE_REVIEW_REQUEST } from '../types';
+import {
+  CREATE_REVIEW_REQUEST,
+  GET_REVIEWS_REQUEST,
+  SET_REVIEW,
+  DELETE_REVIEW_REQUEST,
+  UPDATE_REVIEW_REQUEST,
+} from '../types';
 
 const initialState = {
   reviews: [],
+  review: {},
   average: null,
   highest: null,
   lowest: null,
@@ -53,12 +60,33 @@ export default createReducer(initialState, {
 
   [requestSuccess(UPDATE_REVIEW_REQUEST)]: (state, { payload }) => ({
     ...state,
+    review: payload.review,
     status: requestSuccess(UPDATE_REVIEW_REQUEST),
   }),
 
   [requestSuccess(UPDATE_REVIEW_REQUEST)]: (state, { payload }) => ({
     ...state,
+    review: {},
     error: payload?.error,
     status: requestFail(UPDATE_REVIEW_REQUEST),
+  }),
+
+  [requestSuccess(DELETE_REVIEW_REQUEST)]: (state, { payload }) => {
+    const filteredItem = state.reviews.filter((review) => review.id === payload.reviewId);
+    state.reviews = filteredItem;
+    state.status = requestSuccess(DELETE_REVIEW_REQUEST);
+  },
+
+  [requestFail(DELETE_REVIEW_REQUEST)]: (state, { payload }) => ({
+    ...state,
+    review: {},
+    error: payload?.error,
+    status: requestFail(DELETE_REVIEW_REQUEST),
+  }),
+
+  [SET_REVIEW]: (state, { payload }) => ({
+    ...state,
+    review: payload.review,
+    status: SET_REVIEW,
   }),
 });

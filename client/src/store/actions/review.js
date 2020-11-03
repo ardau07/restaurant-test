@@ -1,6 +1,12 @@
 import reviewService from 'src/services/reviewService';
 import { requestFail, requestPending, requestSuccess } from 'src/utils/api';
-import { CREATE_REVIEW_REQUEST, GET_REVIEWS_REQUEST, UPDATE_REVIEW_REQUEST } from '../types';
+import {
+  CREATE_REVIEW_REQUEST,
+  GET_REVIEWS_REQUEST,
+  UPDATE_REVIEW_REQUEST,
+  DELETE_REVIEW_REQUEST,
+  SET_REVIEW,
+} from '../types';
 
 export function getReviews(restaurantId, offset, limit) {
   return async (dispatch) => {
@@ -70,5 +76,36 @@ export function updateReview(restaurantId, reviewId, data, successCB, failCB) {
       });
       failCB && failCB();
     }
+  };
+}
+
+export function deleteReview(restaurantId, reviewId, successCB, failCB) {
+  return async (dispatch) => {
+    try {
+      dispatch({ type: requestPending(DELETE_REVIEW_REQUEST) });
+
+      await reviewService.deleteReview(restaurantId, reviewId);
+
+      dispatch({
+        type: requestSuccess(DELETE_REVIEW_REQUEST),
+        payload: { reviewId },
+      });
+      successCB && successCB();
+    } catch (error) {
+      dispatch({
+        type: requestFail(DELETE_REVIEW_REQUEST),
+        payload: error?.response?.data,
+      });
+      failCB && failCB();
+    }
+  };
+}
+
+export function setReview(review) {
+  return (dispatch) => {
+    dispatch({
+      type: SET_REVIEW,
+      payload: { review },
+    });
   };
 }

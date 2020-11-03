@@ -78,6 +78,7 @@ function RestaurantsList() {
   };
 
   const handleCreateRestaurant = () => {
+    dispatch(setRestaurant({}));
     setRestaurantId('new');
     setOpenDialog(true);
   };

@@ -16,12 +16,18 @@ import {
   Typography,
 } from '@material-ui/core';
 import { Rating } from '@material-ui/lab';
-import { Reply as ReplyIcon } from '@material-ui/icons';
+import {
+  Edit as EditIcon,
+  DeleteForever as DeleteIcon,
+  Reply as ReplyIcon,
+} from '@material-ui/icons';
+import { useSnackbar } from 'notistack';
+import { useConfirm } from 'material-ui-confirm';
 
 import CommentDialog from 'src/components/CommentDialog';
 import ReplyDialog from 'src/components/ReplyDialog';
 import Loader from 'src/components/Loader';
-import { getReviews } from 'src/store/actions/review';
+import { getReviews, setReview, deleteReview } from 'src/store/actions/review';
 import { decimalFormat } from 'src/utils/number';
 import ROLES from 'src/constants/roles';
 
@@ -44,6 +50,9 @@ function RestaurantDetails() {
   );
   const { restaurants } = useSelector((state) => state.restaurant);
   const profile = useSelector((state) => state.auth.user);
+
+  const snackbar = useSnackbar();
+  const confirm = useConfirm();
 
   const fetchReviews = useCallback(async () => {
     setLoading(true);
@@ -69,6 +78,7 @@ function RestaurantDetails() {
   };
 
   const handleLeaveComment = () => {
+    dispatch(setReview({}));
     setOpenCommentDialog(true);
     setReviewId('new');
   };
@@ -76,6 +86,37 @@ function RestaurantDetails() {
   const handleSelectReview = (id) => () => {
     setOpenReplyDialog(true);
     setReviewId(id);
+  };
+
+  const handleUpdateComment = (id) => () => {
+    const review = reviews.find((item) => item.id === id);
+    dispatch(setReview(review));
+    setReviewId(id);
+    setOpenCommentDialog(true);
+  };
+
+  const handleDeleteComment = (id) => () => {
+    confirm({
+      description: 'Are you going to delete this restaurant?',
+    }).then(() => {
+      dispatch(
+        deleteReview(
+          restaurantId,
+          id,
+          () => {
+            snackbar.enqueueSnackbar('Delete a restaurant successfully', { variant: 'success' });
+            if (totalCount === page * rowsPerPage + 1 && page > 0) {
+              setPage(page - 1);
+            } else {
+              fetchReviews();
+            }
+          },
+          () => {
+            snackbar.enqueueSnackbar('Delete a restaurant failed', { variant: 'error' });
+          }
+        )
+      );
+    });
   };
 
   return loading ? (
@@ -132,6 +173,7 @@ function RestaurantDetails() {
                 <TableCell>Visit Date</TableCell>
                 <TableCell>Comment</TableCell>
                 <TableCell>Reply</TableCell>
+                {profile.role === ROLES.ADMIN && <TableCell>Actions</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -166,6 +208,16 @@ function RestaurantDetails() {
                         </IconButton>
                       )}
                     </TableCell>
+                    {profile.role === ROLES.ADMIN && (
+                      <TableCell className={classes.noPadding}>
+                        <IconButton>
+                          <EditIcon color="primary" onClick={handleUpdateComment(review.id)} />
+                        </IconButton>
+                        <IconButton>
+                          <DeleteIcon color="error" onClick={handleDeleteComment(review.id)} />
+                        </IconButton>
+                      </TableCell>
+                    )}
                   </TableRow>
                 ))}
             </TableBody>

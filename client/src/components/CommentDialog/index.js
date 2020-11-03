@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import {
@@ -15,28 +15,21 @@ import { Rating } from '@material-ui/lab';
 import { Formik } from 'formik';
 import { useSnackbar } from 'notistack';
 
-import { createReview } from 'src/store/actions/review';
+import { createReview, updateReview } from 'src/store/actions/review';
+import ROLES from 'src/constants/roles';
+
 import validationSchema from './schema';
 
 function CommentDialog({ open, reviewId, onClose, fetch }) {
   const { restaurantId } = useParams();
 
-  const [rating, setRating] = useState(1);
-
   const dispatch = useDispatch();
-  const { reviews } = useSelector((state) => state.review);
+  const { review } = useSelector((state) => state.review);
   const profile = useSelector((state) => state.auth.user);
 
-  const snackbar = useSnackbar();
+  const [rating, setRating] = useState(review.rating || 1);
 
-  const review = useMemo(() => {
-    if (open) {
-      const findReview = reviews && reviews.find((item) => item.id === reviewId);
-      setRating(findReview?.rating || 1);
-      return findReview;
-    }
-    return null;
-  }, [reviews, reviewId, open]);
+  const snackbar = useSnackbar();
 
   const handleSubmit = async (values) => {
     if (reviewId === 'new') {
@@ -55,6 +48,23 @@ function CommentDialog({ open, reviewId, onClose, fetch }) {
           }
         )
       );
+    } else {
+      await dispatch(
+        updateReview(
+          restaurantId,
+          reviewId,
+          values,
+          () => {
+            onClose();
+            fetch();
+            snackbar.enqueueSnackbar('Update a comment successfully', { variant: 'success' });
+          },
+          () => {
+            onClose();
+            snackbar.enqueueSnackbar('Update a comment failed', { variant: 'error' });
+          }
+        )
+      );
     }
   };
 
@@ -63,9 +73,9 @@ function CommentDialog({ open, reviewId, onClose, fetch }) {
       <Dialog onClose={onClose} aria-labelledby="comment-dialog" open={open}>
         <Formik
           initialValues={{
-            commenterId: review?.userId || profile.id,
+            commenterId: review?.commenter?.id || profile.id,
             rating: review?.rating || 1,
-            visitDate: review?.visitDate || '',
+            visitDate: (review?.visitDate || '').slice(0, 10),
             comment: review?.comment || '',
             reply: review?.reply || '',
           }}
@@ -128,6 +138,22 @@ function CommentDialog({ open, reviewId, onClose, fetch }) {
                   multiline
                   rows={5}
                 />
+                {profile.role === ROLES.ADMIN && (
+                  <TextField
+                    error={Boolean(touched.reply && errors.reply)}
+                    fullWidth
+                    helperText={touched.reply && errors.reply}
+                    label="Reply"
+                    margin="normal"
+                    name="reply"
+                    onBlur={handleBlur}
+                    onChange={handleChange}
+                    value={values.reply}
+                    variant="outlined"
+                    multiline
+                    rows={3}
+                  />
+                )}
               </DialogContent>
               <DialogActions>
                 <Button onClick={onClose}>CANCEL</Button>

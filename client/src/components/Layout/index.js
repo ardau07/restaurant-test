@@ -5,6 +5,7 @@ import {
   BarChart as HomeIcon,
   Restaurant as RestaurantIcon,
   ExitToApp as LogoutIcon,
+  PeopleAlt as UserIcon,
 } from '@material-ui/icons';
 
 import NavItem from './NavItem';
@@ -49,6 +50,7 @@ function Layout({ children }) {
           {items.map((item) => (
             <NavItem key={item.title} title={item.title} href={item.href} icon={item.icon} />
           ))}
+          <NavItem title="Users" href="/users" icon={UserIcon} />
         </List>
         <Box flexGrow={1} />
         <NavItem title="Log Out" icon={LogoutIcon} onClick={handleLogout} />

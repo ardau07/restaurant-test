@@ -9,6 +9,8 @@ import SignupPage from '../pages/auth/Signup';
 import HomePage from '../pages/main/Home';
 import RestaurantsList from '../pages/restaurant/RestaurantsList';
 import RestaurantDetails from '../pages/restaurant/RestaurantDetails';
+import UsersList from '../pages/user/UsersList';
+import AdminRoute from './AdminRoute';
 
 import { getProfile } from 'src/store/actions/auth';
 
@@ -50,6 +52,7 @@ function Routes() {
             <Route exact path="/home" component={HomePage} />
             <Route exact path="/restaurants" component={RestaurantsList} />
             <Route exact path="/restaurants/:restaurantId" component={RestaurantDetails} />
+            <AdminRoute exact path="/users" component={UsersList} />
           </Switch>
         </Layout>
       )}

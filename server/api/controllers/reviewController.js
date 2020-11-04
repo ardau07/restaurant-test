@@ -151,8 +151,10 @@ const remove = async (req, res) => {
     await db.Restaurant.update(
       {
         avgRating:
-          (restaurant.avgRating * restaurant.numberOfReviews - review.rating) /
-          (restaurant.numberOfReviews - 1),
+          restaurant.numberOfReviews === 1
+            ? 0
+            : (restaurant.avgRating * restaurant.numberOfReviews - review.rating) /
+              (restaurant.numberOfReviews - 1),
         numberOfReviews: restaurant.numberOfReviews - 1,
       },
       { where: { id: restaurantId } }

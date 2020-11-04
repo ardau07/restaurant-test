@@ -200,7 +200,7 @@ function RestaurantDetails() {
                     <TableCell>{review.visitDate.slice(0, 10)}</TableCell>
                     <TableCell>{review.comment}</TableCell>
                     <TableCell className={classes.noPadding}>
-                      {review.reply || profile.role === ROLES.USER ? (
+                      {review.reply || profile.role !== ROLES.OWNER ? (
                         review.reply
                       ) : (
                         <IconButton onClick={handleSelectReview(review.id)}>

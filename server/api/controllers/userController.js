@@ -119,12 +119,36 @@ const remove = async (req, res) => {
   const { userId } = req.params;
 
   try {
+    const reviews = await db.Review.findAll({
+      where: { commenterId: userId },
+    });
+
+    const promises = reviews.map(async (review) => {
+      const restaurant = await db.Restaurant.findOne({
+        where: { id: review.restaurantId },
+      });
+      return db.Restaurant.update(
+        {
+          avgRating:
+            restaurant.numberOfReviews === 1
+              ? 0
+              : (restaurant.avgRating * restaurant.numberOfReviews - review.rating) /
+                (restaurant.numberOfReviews - 1),
+          numberOfReviews: restaurant.numberOfReviews - 1,
+        },
+        { where: { id: review.restaurantId } }
+      );
+    });
+
+    await Promise.all(promises);
+
     await db.User.destroy({
       where: { id: userId },
     });
 
     return res.status(204).json({ success: true });
   } catch (err) {
+    console.log('error: ', err);
     return res.status(500).json({
       error: err.toString(),
     });

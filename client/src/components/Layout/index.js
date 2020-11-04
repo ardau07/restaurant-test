@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Box, Drawer, List, Typography } from '@material-ui/core';
 import {
   BarChart as HomeIcon,
@@ -12,6 +12,7 @@ import NavItem from './NavItem';
 import { logout } from 'src/store/actions/auth';
 
 import useStyles from './style';
+import ROLES from 'src/constants/roles';
 
 const items = [
   {
@@ -30,6 +31,7 @@ function Layout({ children }) {
   const classes = useStyles();
 
   const dispatch = useDispatch();
+  const profile = useSelector((state) => state.auth.user);
 
   const handleLogout = () => {
     dispatch(logout());
@@ -50,7 +52,7 @@ function Layout({ children }) {
           {items.map((item) => (
             <NavItem key={item.title} title={item.title} href={item.href} icon={item.icon} />
           ))}
-          <NavItem title="Users" href="/users" icon={UserIcon} />
+          {profile.role === ROLES.ADMIN && <NavItem title="Users" href="/users" icon={UserIcon} />}
         </List>
         <Box flexGrow={1} />
         <NavItem title="Log Out" icon={LogoutIcon} onClick={handleLogout} />

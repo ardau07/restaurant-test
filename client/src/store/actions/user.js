@@ -5,6 +5,7 @@ import {
   UPDATE_USER_REQUEST,
   DELETE_USER_REQUEST,
   ADD_USER_REQUEST,
+  SET_USER,
 } from '../types';
 
 export function getUsers(offset, limit) {
@@ -90,5 +91,14 @@ export function deleteUser(id, successCB, failedCB) {
       });
       failedCB && failedCB();
     }
+  };
+}
+
+export function setUser(user) {
+  return (dispatch) => {
+    dispatch({
+      type: SET_USER,
+      payload: { user },
+    });
   };
 }

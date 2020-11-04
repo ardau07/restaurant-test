@@ -15,7 +15,7 @@ const AdminRoute = (props) => {
       render={() => {
         if (!isLoggedIn) return <Redirect to="/login" />;
         if (profile.role === ROLES.ADMIN) return <Component {...props} />;
-        return <Redirect to="/404" />;
+        return <Redirect to="/" />;
       }}
     />
   );

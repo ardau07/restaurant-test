@@ -6,10 +6,13 @@ import {
   GET_USERS_REQUEST,
   DELETE_USER_REQUEST,
   UPDATE_USER_REQUEST,
+  SET_USER,
 } from '../types';
 
 const initialState = {
   users: [],
+  user: {},
+  totalCount: 0,
   status: 'INIT',
   error: null,
 };
@@ -66,5 +69,11 @@ export default createReducer(initialState, {
     user: {},
     error: payload.error,
     status: requestFail(DELETE_USER_REQUEST),
+  }),
+
+  [SET_USER]: (state, { payload }) => ({
+    ...state,
+    user: payload.user,
+    status: SET_USER,
   }),
 });

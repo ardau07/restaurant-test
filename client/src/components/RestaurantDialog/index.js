@@ -27,8 +27,10 @@ function ReplyDialog({ open, restaurantId, reviewId, onClose, fetch }) {
   const snackbar = useSnackbar();
 
   useEffect(() => {
-    dispatch(getUsers());
-  }, [dispatch]);
+    if (profile.role === ROLES.ADMIN) {
+      dispatch(getUsers());
+    }
+  }, [dispatch, profile]);
 
   const handleSubmit = async (values) => {
     if (restaurantId === 'new') {

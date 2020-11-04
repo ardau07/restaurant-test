@@ -109,8 +109,49 @@ const getUser = async (req, res) => {
   return res.json({ user: req.user });
 };
 
+const updateUser = async (req, res) => {
+  try {
+    await db.User.update(
+      {
+        ...req.body,
+      },
+      {
+        where: { id: req.user.id },
+        individualHooks: true,
+      }
+    );
+
+    const user = await db.User.findOne({
+      where: { id: req.user.id },
+      attributes: ['id', 'firstName', 'lastName', 'email', 'role'],
+    });
+
+    return res.status(200).json({ user });
+  } catch (err) {
+    return res.status(500).json({
+      error: err.toString(),
+    });
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    await db.User.destroy({
+      where: { id: req.user.id },
+    });
+
+    return res.status(204).json({ success: true });
+  } catch (err) {
+    return res.status(500).json({
+      error: err.toString(),
+    });
+  }
+};
+
 module.exports = {
   login,
   signup,
   getUser,
+  updateUser,
+  deleteUser,
 };

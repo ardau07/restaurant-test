@@ -62,12 +62,24 @@ const create = async (req, res) => {
   } else if (rating < 1 || rating > 5) {
     error['rating'] = 'Rating should be in 1 to 5';
   }
-  if (!visitDate) error['visitDate'] = 'Visit date is required';
+  if (!visitDate) {
+    error['visitDate'] = 'Visit date is required';
+  } else if (new Date(visitDate) > new Date()) {
+    error['visitDate'] = 'Visit date cannot be future';
+  }
   if (!comment) error['comment'] = 'Comment is required';
   if (!commenterId) error['commenter'] = 'Commenter is required';
   if (Object.keys(error).length > 0) {
     return res.status(400).json({
       error,
+    });
+  }
+  const myReview = await db.Review.findOne({
+    where: { restaurantId, commenterId: req.user.id },
+  });
+  if (myReview) {
+    return res.status(400).json({
+      error: "You've already left a comment to this restaurant",
     });
   }
 

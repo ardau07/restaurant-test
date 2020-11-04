@@ -210,11 +210,11 @@ function RestaurantDetails() {
                     </TableCell>
                     {profile.role === ROLES.ADMIN && (
                       <TableCell className={classes.noPadding}>
-                        <IconButton>
-                          <EditIcon color="primary" onClick={handleUpdateComment(review.id)} />
+                        <IconButton onClick={handleUpdateComment(review.id)}>
+                          <EditIcon color="primary" />
                         </IconButton>
-                        <IconButton>
-                          <DeleteIcon color="error" onClick={handleDeleteComment(review.id)} />
+                        <IconButton onClick={handleDeleteComment(review.id)}>
+                          <DeleteIcon color="error" />
                         </IconButton>
                       </TableCell>
                     )}

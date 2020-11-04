@@ -1,6 +1,7 @@
 const { Op } = require('sequelize');
 
 const db = require('../../db/models');
+const ROLES = require('../../constants/roles');
 
 const get = async (req, res) => {
   const { limit, offset } = req.query;
@@ -92,6 +93,10 @@ const update = async (req, res) => {
   const { userId } = req.params;
 
   try {
+    const prevUser = await db.User.findOne({
+      where: { id: userId },
+    });
+
     await db.User.update(
       {
         ...req.body,
@@ -106,6 +111,35 @@ const update = async (req, res) => {
       where: { id: userId },
       attributes: ['id', 'firstName', 'lastName', 'email', 'role'],
     });
+
+    if (prevUser.role === ROLES.OWNER && user.role !== ROLES.OWNER) {
+      await db.Restaurant.destroy({
+        where: { ownerId: user.id },
+      });
+    } else if (prevUser.role === ROLES.USER && user.role !== ROLES.USER) {
+      const reviews = await db.Review.findAll({
+        where: { commenterId: userId },
+      });
+
+      const promises = reviews.map(async (review) => {
+        const restaurant = await db.Restaurant.findOne({
+          where: { id: review.restaurantId },
+        });
+        return db.Restaurant.update(
+          {
+            avgRating:
+              restaurant.numberOfReviews === 1
+                ? 0
+                : (restaurant.avgRating * restaurant.numberOfReviews - review.rating) /
+                  (restaurant.numberOfReviews - 1),
+            numberOfReviews: restaurant.numberOfReviews - 1,
+          },
+          { where: { id: review.restaurantId } }
+        );
+      });
+
+      await Promise.all(promises);
+    }
 
     return res.status(200).json({ user });
   } catch (err) {
@@ -148,7 +182,6 @@ const remove = async (req, res) => {
 
     return res.status(204).json({ success: true });
   } catch (err) {
-    console.log('error: ', err);
     return res.status(500).json({
       error: err.toString(),
     });

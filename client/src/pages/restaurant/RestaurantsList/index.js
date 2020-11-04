@@ -185,11 +185,8 @@ function RestaurantsList() {
                         <IconButton onClick={handleUpdateRestaurant(restaurant.id)}>
                           <EditIcon color="primary" />
                         </IconButton>
-                        <IconButton>
-                          <DeleteIcon
-                            color="error"
-                            onClick={handleDeleteRestaurant(restaurant.id)}
-                          />
+                        <IconButton onClick={handleDeleteRestaurant(restaurant.id)}>
+                          <DeleteIcon color="error" />
                         </IconButton>
                       </TableCell>
                     )}

@@ -8,6 +8,10 @@ const router = express.Router();
 router.post('/login', authController.login);
 router.post('/signup', authController.signup);
 
-router.get('/user', passport.authenticate('jwt', { session: false }), authController.getUser);
+router
+  .route('/user')
+  .get(passport.authenticate('jwt', { session: false }), authController.getUser)
+  .put(passport.authenticate('jwt', { session: false }), authController.updateUser)
+  .delete(passport.authenticate('jwt', { session: false }), authController.deleteUser);
 
 module.exports = router;

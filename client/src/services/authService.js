@@ -38,6 +38,30 @@ class AuthService {
       throw error;
     }
   };
+
+  updateProfile = async (payload) => {
+    try {
+      const response = await axios.put(`${baseURL}/user`, payload);
+      if (response.status >= 200 && response.status < 300) {
+        return response.data;
+      }
+      throw new Error(response.data);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  deleteProfile = async () => {
+    try {
+      const response = await axios.delete(`${baseURL}/user`);
+      if (response.status >= 200 && response.status < 300) {
+        return response.data;
+      }
+      throw new Error(response.data);
+    } catch (error) {
+      throw error;
+    }
+  };
 }
 
 const authService = new AuthService();

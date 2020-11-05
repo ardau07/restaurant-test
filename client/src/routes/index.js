@@ -9,6 +9,7 @@ import SignupPage from '../pages/auth/Signup';
 import HomePage from '../pages/main/Home';
 import RestaurantsList from '../pages/restaurant/RestaurantsList';
 import RestaurantDetails from '../pages/restaurant/RestaurantDetails';
+import Settings from '../pages/settings/Settings';
 import UsersList from '../pages/user/UsersList';
 import AdminRoute from './AdminRoute';
 
@@ -53,6 +54,7 @@ function Routes() {
             <Route exact path="/restaurants" component={RestaurantsList} />
             <Route exact path="/restaurants/:restaurantId" component={RestaurantDetails} />
             <AdminRoute exact path="/users" component={UsersList} />
+            <Route exact path="/settings" component={Settings} />
           </Switch>
         </Layout>
       )}

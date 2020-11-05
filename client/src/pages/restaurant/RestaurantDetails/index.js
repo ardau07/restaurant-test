@@ -223,7 +223,7 @@ function RestaurantDetails() {
             </TableBody>
           </Table>
           <TablePagination
-            rowsPerPageOptions={[5, 10, 225]}
+            rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={totalCount}
             rowsPerPage={rowsPerPage}

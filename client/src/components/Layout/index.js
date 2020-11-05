@@ -6,6 +6,7 @@ import {
   Restaurant as RestaurantIcon,
   ExitToApp as LogoutIcon,
   PeopleAlt as UserIcon,
+  Settings as SettingsIcon,
 } from '@material-ui/icons';
 
 import NavItem from './NavItem';
@@ -53,6 +54,7 @@ function Layout({ children }) {
             <NavItem key={item.title} title={item.title} href={item.href} icon={item.icon} />
           ))}
           {profile.role === ROLES.ADMIN && <NavItem title="Users" href="/users" icon={UserIcon} />}
+          <NavItem title="Settings" href="/settings" icon={SettingsIcon} />
         </List>
         <Box flexGrow={1} />
         <NavItem title="Log Out" icon={LogoutIcon} onClick={handleLogout} />
